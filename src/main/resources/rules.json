@@ -1,0 +1,45 @@
+[
+  {
+    "description": "Сколько животных – травоядных",
+    "statements": [
+      {
+        "fieldName": "type",
+        "stringValue": "Травоядное",
+        "action": "EQUALS"
+      }
+    ]
+  },
+  {
+    "description": "Сколько животных – травоядных или плотоядных и они при этом маленькие",
+    "statements": [
+      {
+        "fieldName": "type",
+        "arrayValue": [
+          "Травоядное",
+          "Плотоядное"
+        ],
+        "action": "CONTAINS"
+      },
+      {
+        "fieldName": "height",
+        "stringValue": "Маленькое",
+        "action": "EQUALS"
+      }
+    ]
+  },
+  {
+    "description": "Сколько животных – всеядных, но не являются высокими",
+    "statements": [
+      {
+        "fieldName": "type",
+        "stringValue": "Всеядное",
+        "action": "EQUALS"
+      },
+      {
+        "fieldName": "height",
+        "stringValue": "tall",
+        "action": "NOT_EQUALS"
+      }
+    ]
+  }
+]
