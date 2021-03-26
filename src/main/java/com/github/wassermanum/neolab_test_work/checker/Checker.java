@@ -3,13 +3,23 @@ package com.github.wassermanum.neolab_test_work.checker;
 import com.github.wassermanum.neolab_test_work.Action;
 import com.github.wassermanum.neolab_test_work.Rule;
 import com.github.wassermanum.neolab_test_work.Statement;
+import com.github.wassermanum.neolab_test_work.checker.action_runner.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Checker {
+
+    private static final Map<Action, ActionRunner> actionRunnersForActions;
+
+    static {
+        actionRunnersForActions = new HashMap<>();
+        actionRunnersForActions.put(Action.EQUALS, new EqualsActionRunner());
+        actionRunnersForActions.put(Action.NOT_EQUALS, new NotEqualsActionRunner());
+        actionRunnersForActions.put(Action.CONTAINS, new ContainsActionRunner());
+    }
 
     private Checker() {
     }
@@ -19,34 +29,20 @@ public class Checker {
         AtomicBoolean result = new AtomicBoolean(true);
 
         statements.forEach(statement -> {
-            String stringValue = statement.getStringValue();
-            List<String> arrayValue = statement.getArrayValue();
             Action action = statement.getAction();
             String fieldName = statement.getFieldName();
-            String actualValue = entity.get(fieldName);
             if (action == null) {
                 throw new CheckerException("Поля '" + fieldName + "' в сущностях нет");
             }
-            switch (action) {
-                case EQUALS:
-                    if (stringValue == null) {
-                        throw new CheckerException("Для правила 'EQUALS' требуется наличие 'stringValue'");
-                    }
-                    result.set(result.get() && Objects.equals(actualValue, stringValue));
-                    break;
-                case NOT_EQUALS:
-                    if (stringValue == null) {
-                        throw new CheckerException("Для правила 'NOT_EQUALS' требуется наличие 'stringValue'");
-                    }
-                    result.set(result.get() && !Objects.equals(actualValue, stringValue));
-                    break;
-                case CONTAINS:
-                    if (arrayValue == null) {
-                        throw new CheckerException("Для правила 'CONTAINS' требуется наличие 'arrayValue'");
-                    }
-                    result.set(result.get() && arrayValue.contains(actualValue));
-                    break;
-                // default не описан, поскольку варианты берутся из enum
+
+            ActionRunner actionRunner = actionRunnersForActions.get(action);
+            if (actionRunner == null) {
+                throw new CheckerException("Для действия '" + action.toString() + "' нет обработчика");
+            }
+            try {
+                result.set(result.get() && actionRunner.run(entity, statement));
+            } catch (ActionRunnerException e) {
+                throw new CheckerException(e.getMessage(), e);
             }
         });
         return result.get();
