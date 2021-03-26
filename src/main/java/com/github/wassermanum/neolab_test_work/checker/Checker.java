@@ -14,7 +14,7 @@ public class Checker {
     private Checker() {
     }
 
-    public static boolean check(Map<String, String> animal, Rule rule) throws CheckerException {
+    public static boolean check(Map<String, String> entity, Rule rule) throws CheckerException {
         List<Statement> statements = rule.getStatements();
         AtomicBoolean result = new AtomicBoolean(true);
 
@@ -23,7 +23,7 @@ public class Checker {
             List<String> arrayValue = statement.getArrayValue();
             Action action = statement.getAction();
             String fieldName = statement.getFieldName();
-            String actualValue = animal.get(fieldName);
+            String actualValue = entity.get(fieldName);
             if (action == null) {
                 throw new CheckerException("Поля '" + fieldName + "' в сущностях нет");
             }
