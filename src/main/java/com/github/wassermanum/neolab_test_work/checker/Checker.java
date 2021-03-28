@@ -26,13 +26,14 @@ public class Checker {
 
     public static boolean check(Map<String, String> entity, Rule rule) throws CheckerException {
         List<Statement> statements = rule.getStatements();
+        if(statements == null) {
+            throw new CheckerException("Для правила не определены выражения");
+        }
         AtomicBoolean result = new AtomicBoolean(true);
-
         statements.forEach(statement -> {
             Action action = statement.getAction();
-            String fieldName = statement.getFieldName();
             if (action == null) {
-                throw new CheckerException("Поля '" + fieldName + "' в сущностях нет");
+                throw new CheckerException("Для выражения не определено действие");
             }
 
             ActionRunner actionRunner = actionRunnersForActions.get(action);

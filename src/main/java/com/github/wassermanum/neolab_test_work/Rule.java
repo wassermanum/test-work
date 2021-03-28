@@ -6,6 +6,11 @@ public class Rule {
     private List<Statement> statements;
     private String description;
 
+    public Rule(List<Statement> statements, String description) {
+        this.statements = statements;
+        this.description = description;
+    }
+
     public String getDescription() {
         return description;
     }

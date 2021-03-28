@@ -24,6 +24,8 @@ public class EntityReader {
                 return result;
             } catch (IOException e) {
                 throw new EntityReaderException("Ошибка парсинга CSV с сущностями", e);
+            } catch (NullPointerException e) {
+                throw new EntityReaderException("Не удаётся прочитать заголовки столбцов", e);
             }
         } catch (IOException e) {
             throw new EntityReaderException("Ошибка чтения файла с сущностями", e);
