@@ -6,6 +6,9 @@ public class Rule {
     private List<Statement> statements;
     private String description;
 
+    public Rule() {
+    }
+
     public Rule(List<Statement> statements, String description) {
         this.statements = statements;
         this.description = description;
